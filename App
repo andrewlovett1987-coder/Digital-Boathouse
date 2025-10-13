@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erg Performance & Training Plan Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --theme-blue: #0A2240;
+            --theme-gold: #D4A01E;
+            --theme-white: #FFFFFF;
+            --theme-light-gray: #f0f2f5;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--theme-light-gray);
+            color: var(--theme-blue);
+        }
+        .plan-table th, .plan-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .plan-table th {
+            background-color: #e9ecef;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+         .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltiptext ul { list-style-position: inside; padding-left: 0; }
+        .tooltiptext li { margin-bottom: 5px; }
+        .btn-primary {
+            background-color: var(--theme-gold);
+            color: var(--theme-blue);
+            font-weight: 600;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #b98b1a;
+        }
+         .btn-secondary {
+            background-color: var(--theme-blue);
+            color: var(--theme-white);
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #071a31;
+        }
+        .clickable-session {
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+            border: none;
+            background: none;
+            padding: 0;
+            text-align: left;
+            color: var(--theme-blue);
+        }
+        .clickable-session:hover {
+            color: var(--theme-gold);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-10">
+             <h1 class="text-4xl font-bold text-[var(--theme-blue)]">Erg Performance & Training Plan Generator</h1>
+            <p class="mt-2 text-xl text-gray-600">A dynamic tool to create evidence-based, personalised training plans.</p>
+        </header>
+
+        <main>
+            <!-- Step 1: Input Data Section -->
+            <section id="input-section" class="bg-white p-8 rounded-xl shadow-lg mb-8">
+                <h2 class="text-2xl font-bold mb-6 border-b pb-4 text-[var(--theme-blue)]">Step 1: Your Performance & Personal Data</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Performance Data -->
+                    <div>
+                        <label for="peak-power" class="flex items-center text-sm font-medium text-gray-700">7 Stroke Max (Watts)
+                            <div class="tooltip ml-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                                <span class="tooltiptext"><strong>Protocol:</strong> From a dead stop, row 7 strokes at max power. Record the highest single watt number seen.</span>
+                            </div>
+                        </label>
+                        <input type="number" id="peak-power" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="901">
+                    </div>
+                    <div>
+                        <label for="anaerobic-power" class="flex items-center text-sm font-medium text-gray-700">60s Max (Avg Watts)
+                            <div class="tooltip ml-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                                <span class="tooltiptext"><strong>Protocol:</strong> From a dead stop, row for max distance/power for exactly 60 seconds. Record the final Average Watts.</span>
+                            </div>
+                        </label>
+                        <input type="number" id="anaerobic-power" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="612">
+                    </div>
+                    <div>
+                        <label for="aerobic-power" class="flex items-center text-sm font-medium text-gray-700">30' R20 (Avg Watts)
+                             <div class="tooltip ml-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                                <span class="tooltiptext"><strong>Protocol:</strong> Row for max distance for 30 minutes, capped at 20spm. Record final Average Watts.</span>
+                            </div>
+                        </label>
+                        <input type="number" id="aerobic-power" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="244">
+                    </div>
+                     <div>
+                        <label for="current-hours" class="block text-sm font-medium text-gray-700">Current Weekly Training Hours</label>
+                        <input type="number" id="current-hours" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="5">
+                    </div>
+                     <div>
+                        <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                        <select id="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm">
+                            <option value="male" selected>Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                        <input type="number" id="age" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="38">
+                    </div>
+                     <div>
+                        <label for="bodyweight" class="block text-sm font-medium text-gray-700">Bodyweight (kg)</label>
+                        <input type="number" id="bodyweight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="95">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                           <label for="height-ft" class="block text-sm font-medium text-gray-700">Height (ft)</label>
+                           <input type="number" id="height-ft" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="6">
+                        </div>
+                        <div>
+                           <label for="height-in" class="block text-sm font-medium text-gray-700">(in)</label>
+                           <input type="number" id="height-in" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="3">
+                        </div>
+                    </div>
+                     <div class="grid grid-cols-2 gap-4 col-span-1 md:col-span-2 lg:col-span-1">
+                        <div>
+                           <label for="resting-hr" class="block text-sm font-medium text-gray-700">Resting HR</label>
+                           <input type="number" id="resting-hr" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="49">
+                        </div>
+                        <div>
+                           <label for="max-hr" class="block text-sm font-medium text-gray-700">Max HR</label>
+                           <input type="number" id="max-hr" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm" value="185">
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 text-center space-x-4">
+                    <button id="analyse-btn" class="btn-secondary py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                        Analyse Performance
+                    </button>
+                    <button id="clear-btn" class="text-xs text-gray-500 hover:underline">Clear Saved Settings</button>
+                </div>
+            </section>
+            
+            <!-- Analysis & Availability Section (Initially hidden) -->
+            <section id="analysis-availability-section" class="hidden">
+                 <div class="bg-white p-8 rounded-xl shadow-lg mb-8">
+                    <h2 class="text-2xl font-bold mb-6 border-b pb-4 text-[var(--theme-blue)]">Performance Analysis</h2>
+                    <div id="analysis-output" class="space-y-4"></div>
+                </div>
+                
+                 <div class="bg-white p-8 rounded-xl shadow-lg mb-8">
+                    <h2 class="text-2xl font-bold mb-6 border-b pb-4 text-[var(--theme-blue)]">Step 2: Set Your Training & Nutrition Goals</h2>
+                    <div id="volume-feedback" class="mb-6 p-4 rounded-lg"></div>
+                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                         <div>
+                            <label for="training-days" class="block text-sm font-medium text-gray-700">Target Days per Week</label>
+                            <select id="training-days" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm">
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="sessions-per-day" class="block text-sm font-medium text-gray-700">Target Sessions per Day</label>
+                            <select id="sessions-per-day" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm">
+                                <option value="1" selected>1</option><option value="2">2</option><option value="3">3</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="session-duration" class="block text-sm font-medium text-gray-700">Avg. Time per Session</label>
+                            <select id="session-duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm">
+                                <option value="30">30 mins</option><option value="60" selected>60 mins</option><option value="90">90 mins</option><option value="120">120 mins</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-1">
+                            <label for="strength-equipment" class="block text-sm font-medium text-gray-700">Strength Equipment</label>
+                            <select id="strength-equipment" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm">
+                                <option value="Bodyweight">Bodyweight Only</option>
+                                <option value="Dumbbells" selected>Dumbbells & Bench</option>
+                                <option value="Full Gym">Full Gym</option>
+                            </select>
+                        </div>
+                         <div class="md:col-span-1">
+                            <label for="weight-goal" class="block text-sm font-medium text-gray-700">Weight Goal</label>
+                            <select id="weight-goal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--theme-gold)] focus:ring-[var(--theme-gold)] sm:text-sm">
+                                <option value="lose">Lose Weight</option>
+                                <option value="maintain" selected>Maintain</option>
+                                <option value="gain">Gain Weight</option>
+                            </select>
+                        </div>
+                     </div>
+                     <div class="mt-6 text-center">
+                        <button id="generate-plan-btn" class="btn-primary py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                            Generate & Save Plan
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Full Plan Results Section (Initially hidden) -->
+            <section id="results-section" class="hidden">
+                <div id="zones-section" class="bg-white p-8 rounded-xl shadow-lg mb-8">
+                    <h2 class="text-2xl font-bold mb-2 text-[var(--theme-blue)]">Your Personalised Training Zones</h2>
+                    <p class="text-sm text-gray-500 mb-4">Calculated using your Heart Rate Reserve and 30-minute test power.</p>
+                    <div id="zones-output" class="overflow-x-auto"></div>
+                </div>
+                <div id="plan-section" class="bg-white p-8 rounded-xl shadow-lg mb-8">
+                    <h2 class="text-2xl font-bold mb-6 border-b pb-4 text-[var(--theme-blue)]">Your 6-Week Progressive Erg Plan</h2>
+                    <div id="pre-session-mobility"></div>
+                    <div id="plan-output"></div>
+                    <div id="post-session-mobility"></div>
+                </div>
+                <div id="supplementary-section" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold mb-4 text-[var(--theme-blue)]">Supplementary Strength Sessions</h3>
+                        <div id="strength-output"></div>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold mb-4 text-[var(--theme-blue)]">Personalised Nutrition Advice</h3>
+                        <div id="nutrition-output"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const analyseBtn = document.getElementById('analyse-btn');
+        const generatePlanBtn = document.getElementById('generate-plan-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const analysisAvailabilitySection = document.getElementById('analysis-availability-section');
+        const volumeFeedback = document.getElementById('volume-feedback');
+        const trainingDaysSelect = document.getElementById('training-days');
+        const sessionsPerDaySelect = document.getElementById('sessions-per-day');
+        const sessionDurationSelect = document.getElementById('session-duration');
+        const strengthEquipmentSelect = document.getElementById('strength-equipment');
+        const weightGoalSelect = document.getElementById('weight-goal');
+        const resultsSection = document.getElementById('results-section');
+        const analysisOutput = document.getElementById('analysis-output');
+        const zonesOutput = document.getElementById('zones-output');
+        const planOutput = document.getElementById('plan-output');
+        const preSessionMobilityOutput = document.getElementById('pre-session-mobility');
+        const postSessionMobilityOutput = document.getElementById('post-session-mobility');
+        const strengthOutput = document.getElementById('strength-output');
+        const nutritionOutput = document.getElementById('nutrition-output');
+        let currentAnalysis = {};
+
+        const allInputIds = [
+            'peak-power', 'anaerobic-power', 'aerobic-power', 'current-hours', 'gender', 'age', 'bodyweight', 
+            'height-ft', 'height-in', 'resting-hr', 'max-hr',
+            'training-days', 'sessions-per-day', 'session-duration', 'strength-equipment', 'weight-goal'
+        ];
+
+        // --- Event Listeners ---
+        window.addEventListener('DOMContentLoaded', loadSettings);
+        
+        analyseBtn.addEventListener('click', () => {
+            const inputs = getUserInputs();
+            if (!inputs) return;
+            currentAnalysis = analyseEnergySystems(inputs.peakPower, inputs.anaerobicPower, inputs.aerobicPower, inputs.age, inputs.gender);
+            const peakPowerAnalysis = calculatePeakPowerAssessment(inputs.peakPower, inputs.bodyweight, inputs.age, inputs.gender);
+            displayAnalysis(currentAnalysis, peakPowerAnalysis);
+            updateVolumeFeedback(); 
+            analysisAvailabilitySection.classList.remove('hidden');
+            document.getElementById('analysis-availability-section').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        generatePlanBtn.addEventListener('click', () => {
+             const inputs = getUserInputs();
+             if (!inputs || !currentAnalysis.weakestSystem) return;
+             
+             saveSettings(); // Save all inputs on generation
+
+             const volumeProgression = calculateVolumeProgression(inputs.currentHours, inputs.trainingDays, inputs.sessionsPerDay, inputs.sessionDuration);
+             const plan = generateTrainingPlan(currentAnalysis.weakestSystem, currentAnalysis.weaknessSignificance, inputs.trainingDays, inputs.sessionsPerDay, volumeProgression);
+             const hrZones = calculateHrZones(inputs.restingHr, inputs.maxHr);
+             const paceZones = calculatePaceZones(inputs.aerobicPower);
+             const dietaryRecs = calculateDietaryRecommendations(inputs.gender, inputs.bodyweight, inputs.heightCm, inputs.age, inputs.trainingDays, currentAnalysis.weakestSystem, inputs.weightGoal);
+             displayZones(hrZones, paceZones);
+             displayPlan(plan);
+             displayMobilityRoutines();
+             displayStrengthPlan(currentAnalysis.weakestSystem, inputs.strengthEquipment, inputs.trainingDays);
+             displayNutritionPlan(dietaryRecs);
+             resultsSection.classList.remove('hidden');
+             document.getElementById('zones-section').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        clearBtn.addEventListener('click', clearSettings);
+        trainingDaysSelect.addEventListener('change', updateVolumeFeedback);
+        sessionsPerDaySelect.addEventListener('change', updateVolumeFeedback);
+        sessionDurationSelect.addEventListener('change', updateVolumeFeedback);
+        document.getElementById('current-hours').addEventListener('input', updateVolumeFeedback);
+
+        // --- Save & Load Functions ---
+        function saveSettings() {
+            const settings = {};
+            allInputIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    settings[id] = element.value;
+                }
+            });
+            localStorage.setItem('ergPlanSettings', JSON.stringify(settings));
+            generatePlanBtn.textContent = 'Saved & Generated!';
+            setTimeout(() => generatePlanBtn.textContent = 'Generate Personalised Plan', 2000);
+        }
+
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('ergPlanSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                allInputIds.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element && settings[id] !== undefined) {
+                        element.value = settings[id];
+                    }
+                });
+            }
+        }
+
+        function clearSettings() {
+            localStorage.removeItem('ergPlanSettings');
+            alert('Saved settings cleared. The page will now reload with default values.');
+            window.location.reload();
+        }
+
+        // --- Data Retrieval & Core Logic ---
+        function getUserInputs() {
+            const trainingDays = parseInt(trainingDaysSelect.value);
+            const sessionsPerDay = parseInt(sessionsPerDaySelect.value);
+            const sessionDuration = parseInt(sessionDurationSelect.value);
+            const strengthEquipment = strengthEquipmentSelect.value;
+            const weightGoal = weightGoalSelect.value;
+            const currentHours = parseFloat(document.getElementById('current-hours').value);
+            const gender = document.getElementById('gender').value;
+            const peakPower = parseInt(document.getElementById('peak-power').value);
+            const anaerobicPower = parseInt(document.getElementById('anaerobic-power').value);
+            const aerobicPower = parseInt(document.getElementById('aerobic-power').value);
+            const restingHr = parseInt(document.getElementById('resting-hr').value);
+            const maxHr = parseInt(document.getElementById('max-hr').value);
+            const heightFt = parseInt(document.getElementById('height-ft').value);
+            const heightIn = parseInt(document.getElementById('height-in').value);
+            const heightCm = (heightFt * 12 + heightIn) * 2.54;
+            const age = parseInt(document.getElementById('age').value);
+            const bodyweight = parseFloat(document.getElementById('bodyweight').value);
+
+            if (isNaN(peakPower) || isNaN(anaerobicPower) || isNaN(aerobicPower) || isNaN(restingHr) || isNaN(maxHr) || isNaN(age) || isNaN(bodyweight) || isNaN(heightCm) || isNaN(currentHours)) {
+                alert('Please fill in all fields with valid numbers.'); return null;
+            }
+             if (bodyweight <= 0 || heightCm <=0 || currentHours < 0) { alert('Please enter valid personal data and current training hours.'); return null; }
+            return { gender, peakPower, anaerobicPower, aerobicPower, restingHr, maxHr, age, bodyweight, trainingDays, sessionsPerDay, sessionDuration, strengthEquipment, heightCm, weightGoal, currentHours };
+        }
+        function updateVolumeFeedback() {
+            const inputs = getUserInputs();
+            if (!inputs) return;
+            const currentMinutes = inputs.currentHours * 60;
+            const targetMinutes = inputs.trainingDays * inputs.sessionsPerDay * inputs.sessionDuration;
+            
+            let text = `Your plan will be built to progress you from your current <strong>${(currentMinutes/60).toFixed(1)} hours/week</strong> towards your target of <strong>${(targetMinutes/60).toFixed(1)} hours/week</strong>.`;
+            let colour = 'bg-blue-100 text-blue-800';
+
+            if (targetMinutes > currentMinutes * 1.5 && currentMinutes > 0) {
+                text += "<br><strong>Warning:</strong> This is a large increase in training volume. The plan will ramp up gradually, but listen to your body and prioritise recovery to avoid injury.";
+                colour = 'bg-yellow-100 text-yellow-800';
+            }
+            volumeFeedback.innerHTML = text;
+            volumeFeedback.className = `mb-6 p-4 rounded-lg ${colour}`;
+        }
+        function calculateVolumeProgression(currentHours, targetDays, targetSessionsPerDay, targetDuration) {
+            const currentMinutes = currentHours * 60;
+            const targetMinutes = targetDays * targetSessionsPerDay * targetDuration;
+            const progression = [];
+            
+            let startMinutes = currentHours > 0 ? currentMinutes * 1.15 : targetMinutes * 0.5;
+            let weeklyMinutes = Math.min(startMinutes, targetMinutes);
+            
+            const weeklyIncrement = (targetMinutes - weeklyMinutes) / 4; 
+
+            for (let i = 0; i < 6; i++) {
+                if (i < 5) {
+                    progression.push(Math.round(weeklyMinutes + (weeklyIncrement * i)));
+                } else {
+                    progression.push(Math.round(targetMinutes * 0.75)); // Taper week
+                }
+            }
+            return progression;
+        }
+        function getAgeAdjustedBenchmarks(age, gender) {
+            const baseBenchmarks = { male: { peak: 666, anaerobic: 566, aerobic: 253.4 }, female: { peak: 520, anaerobic: 440, aerobic: 200 } };
+            const peakAge = 30;
+            const selectedBenchmarks = baseBenchmarks[gender];
+            if (age <= peakAge) return selectedBenchmarks;
+            const declineRates = { peak: 0.009, anaerobic: 0.007, aerobic: 0.006 };
+            const yearsPastPeak = age - peakAge;
+            return {
+                peak: selectedBenchmarks.peak * (1 - (yearsPastPeak * declineRates.peak)),
+                anaerobic: selectedBenchmarks.anaerobic * (1 - (yearsPastPeak * declineRates.anaerobic)),
+                aerobic: selectedBenchmarks.aerobic * (1 - (yearsPastPeak * declineRates.aerobic))
+            };
+        }
+        function analyseEnergySystems(peak, anaerobic, aerobic, age, gender) {
+            const standard = getAgeAdjustedBenchmarks(age, gender);
+            const ratings = { 'Peak Power': peak / standard.peak, 'Anaerobic': anaerobic / standard.anaerobic, 'Aerobic': aerobic / standard.aerobic };
+            const weakestSystem = Object.keys(ratings).reduce((a, b) => ratings[a] < ratings[b] ? a : b);
+            const ratingsArray = Object.values(ratings);
+            const minRating = Math.min(...ratingsArray);
+            const maxRating = Math.max(...ratingsArray);
+            const spread = minRating / maxRating;
+            let weaknessSignificance;
+            if (spread < 0.90) { weaknessSignificance = 'Major Weakness'; } 
+            else if (spread < 0.98) { weaknessSignificance = 'Minor Weakness'; } 
+            else { weaknessSignificance = 'Balanced Profile'; }
+            return { peakRating: ratings['Peak Power'], anaerobicRating: ratings['Anaerobic'], aerobicRating: ratings['Aerobic'], weakestSystem, weaknessSignificance, benchmarks: standard };
+        }
+        function calculatePeakPowerAssessment(peakPower, bodyweight, age, gender) {
+            const ageFactors = { male: { 12: 276, 13: 237, 14: 198, 15: 159, 16: 120, 17: 81, 18: 42, 19: 33, 20: 30, 21: 27, 22: 24, 23: 21, 24: 18, 25: 15, 26: 12, 27: 9, 28: 6, 29: 3, 30: 0, 31: 3, 32: 6, 33: 9, 34: 12, 35: 15, 36: 18, 37: 21, 38: 24, 39: 27, 40: 42, 41: 47.85, 42: 53.7, 43: 59.55, 44: 65.4, 45: 71.25, 46: 77.1, 47: 82.95, 48: 88.8, 49: 94.65, 50: 100.5, 51: 106.35, 52: 112.2, 53: 118.05, 54: 123.9, 55: 129.75, 56: 135.6, 57: 141.45, 58: 147.3, 59: 159, 60: 164.85, 61: 170.7 }, female: { 12: 160, 13: 140, 14: 120, 15: 100, 16: 80, 17: 60, 18: 40, 19: 33, 20: 30, 21: 27, 22: 24, 23: 21, 24: 18, 25: 15, 26: 12, 27: 9, 28: 6, 29: 3, 30: 0, 31: 3, 32: 6, 33: 9, 34: 12, 35: 15, 36: 18, 37: 21, 38: 24, 39: 27, 40: 40, 41: 48, 42: 56, 43: 64, 44: 72, 45: 80, 46: 88, 47: 96, 48: 104, 49: 112, 50: 120, 51: 122.22, 52: 124.44, 53: 126.66, 54: 128.88, 55: 131.1, 56: 133.32, 57: 135.54, 58: 137.76, 59: 140, 60: 145.23, 61: 150.459 } };
+            let ageFactorValue = 0;
+            if (ageFactors[gender] && ageFactors[gender][age]) { ageFactorValue = ageFactors[gender][age]; } 
+            else if (ageFactors[gender]) { const closestAge = Object.keys(ageFactors[gender]).reduce((prev, curr) => Math.abs(curr - age) < Math.abs(prev - age) ? curr : prev); ageFactorValue = ageFactors[gender][closestAge]; }
+            const wattsPerKg = peakPower / bodyweight;
+            const ageAdjustedWattsPerKg = wattsPerKg + (ageFactorValue / 10);
+            let assessment = '';
+            if (ageAdjustedWattsPerKg > 12) assessment = "Exceptional";
+            else if (ageAdjustedWattsPerKg > 10.5) assessment = "Very well developed";
+            else if (ageAdjustedWattsPerKg > 9) assessment = "Well developed";
+            else if (ageAdjustedWattsPerKg > 7.5) assessment = "Average";
+            else assessment = "Area for development";
+            return { wattsPerKg, ageAdjustedWattsPerKg, assessment };
+        }
+        function calculateHrZones(restingHR, maxHR) {
+            const hrReserve = maxHR - restingHR;
+            const zones = [ { name: 'UT3 (Recovery)', intensity: [0.50, 0.60] }, { name: 'UT2 (Endurance)', intensity: [0.60, 0.70] }, { name: 'UT1 (Tempo)', intensity: [0.70, 0.85] }, { name: 'AT (Threshold)', intensity: [0.85, 0.93] }, { name: 'TR (Race Pace)', intensity: [0.93, 1.00] }, ];
+            return zones.map(zone => { const lowerBound = Math.round((hrReserve * zone.intensity[0]) + restingHR); const upperBound = Math.round((hrReserve * zone.intensity[1]) + restingHR); return { name: zone.name, range: `${lowerBound} - ${upperBound} bpm` }; });
+        }
+        function calculatePaceZones(aerobicPower) {
+            const zonePercentages = { 'UT3 (Recovery)': [0.65, 0.75], 'UT2 (Endurance)': [0.75, 0.85], 'UT1 (Tempo)': [0.85, 0.95], 'AT (Threshold)': [0.95, 1.05], 'TR (Race Pace)': [1.05, 1.15] };
+            const wattsToSplitSeconds = (watts) => 500 * Math.pow(2.80 / watts, 1/3);
+            const formatSplit = (totalSeconds) => { if (isNaN(totalSeconds) || !isFinite(totalSeconds)) return "N/A"; const minutes = Math.floor(totalSeconds / 60); const seconds = totalSeconds % 60; return `${minutes}:${seconds.toFixed(1).padStart(4, '0')}`; };
+            let zones = [];
+            for (const [name, percentages] of Object.entries(zonePercentages)) { const lowerWatts = aerobicPower * percentages[0]; const upperWatts = aerobicPower * percentages[1]; const lowerSplit = formatSplit(wattsToSplitSeconds(upperWatts)); const upperSplit = formatSplit(wattsToSplitSeconds(lowerWatts)); zones.push({ name: name, range: `${lowerSplit} - ${upperSplit}` }); }
+            return zones;
+        }
+        
+        function generateErgDataString(sessionText) {
+            if (!sessionText || typeof sessionText !== 'string') return 'N/A';
+            const s = sessionText.replace(/<[^>]*>/g, "").toLowerCase();
+            let match;
+
+            match = s.match(/(\d+)\s*mins continuous/);
+            if (match) return `${match[1]}:00`;
+
+            match = s.match(/(\d+)\s*x\s*(\d+)\s*min.*, (\d+)\s*min.*rest/);
+            if (match) return `${match[1]}x${match[2]}:00/${match[3]}:00r`;
+            
+            match = s.match(/(\d+)\s*x\s*(\d+)\s*min.*, (\d+)\s*s.*rest/);
+            if (match) return `${match[1]}x${match[2]}:00/0:${match[3]}r`;
+
+            if (s.includes('pyramid')) {
+                 match = s.match(/(\d+)'?-(\d+)'?-(\d+)'?-(\d+)'?-(\d+)'?/);
+                 if (match) {
+                     const [_, t1, t2, t3, t4, t5] = match;
+                     return `${t1}:00/${t1}:00r, ${t2}:00/${t2}:00r, ${t3}:00/${t3}:00r, ${t4}:00/${t4}:00r, ${t5}:00/${t5}:00r`;
+                 }
+            }
+            
+            match = s.match(/(\d+)\s*x\s*(\d+)\s*strokes/);
+            if (match) return `Instructions: ${match[1]} intervals of ${match[2]} strokes max effort. Use a time-based interval with long rest (e.g., 0:10 work / 2:00 rest) and row by stroke count.`;
+            
+            return 'Workout format not programmable via text. Please set up manually on the monitor.';
+        }
+        
+        function copyToClipboard(text, element) {
+            const originalHTML = element.innerHTML;
+            if (/^\d/.test(text.trim()) || text.includes(':')) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                element.innerHTML = '<strong>Copied!</strong>';
+                element.style.color = 'var(--theme-gold)';
+                setTimeout(() => {
+                    element.innerHTML = originalHTML;
+                    element.style.color = '';
+                }, 2000);
+            } else {
+                element.innerHTML = '<strong>Manual Setup</strong>';
+                element.style.color = '#DD6B20'; // Orange for info/warning
+                setTimeout(() => {
+                    element.innerHTML = originalHTML;
+                    element.style.color = '';
+                }, 3000);
+            }
+        }
+
+        function generateTrainingPlan(weakestSystem, significance, days, sessionsPerDay, volumeProgression) {
+            const planGenerator = new PlanSynthesiser(weakestSystem, significance, days, sessionsPerDay, volumeProgression);
+            return planGenerator.synthesisePlan();
+        }
+
+        class PlanSynthesiser {
+             constructor(system, significance, days, sessionsPerDay, volumeProgression) { this.system = system; this.significance = significance; this.days = parseInt(days); this.sessionsPerDay = parseInt(sessionsPerDay); this.volumeProgression = volumeProgression; this.plan = { title: '', description: '', weeks: [] }; this.sessionLibrary = { ut2: [(d) => `<strong>UT2 Erg:</strong> ${d} mins continuous @ 18-20spm.`, (d) => `<strong>UT2 Erg:</strong> ${Math.max(2, Math.floor(d / 22))} x 20 mins @ 18-20spm, 2 min rest.`, (d) => `<strong>UT2 Erg:</strong> ${Math.max(3, Math.floor(d / 16))} x 15 mins @ 18-20spm, 1 min rest.`], ut1: [(d) => `<strong>UT1 Erg:</strong> ${Math.max(2, Math.floor(d / 18))} x 15 mins @ 20-22spm, 3 min rest.`, (d) => `<strong>UT1 Erg:</strong> ${Math.max(3, Math.floor(d / 13))} x 10 mins @ 22-24spm, 3 min rest.`, (d) => `<strong>UT1 Erg:</strong> 8 x 2 mins 'on', 1 min 'off' (repeat for ${d} mins total).`], at: [(d) => `<strong>AT Erg:</strong> ${Math.max(3, Math.floor(d / 11))} x 2000m with 5 mins rest.`, (d) => `<strong>AT Erg:</strong> 6 x 6 mins @ 26spm, 3 min rest.`, (d) => `<strong>AT Erg:</strong> 5km, 3km, 2km ladder. Rest ratio 1:1.` ], tr: [(d) => `<strong>TR Erg:</strong> ${Math.max(4, Math.floor(d / 4))} x 500m with 90s rest.`, (d) => `<strong>TR Erg:</strong> 8 x 3 mins @ 28-30spm, 2.5 min rest.`, (d) => `<strong>TR Erg:</strong> ${Math.max(3, Math.floor(d / 6))} x 750m with 90s rest.` ], an: [(d) => `<strong>AN Erg:</strong> 2 sets of (8 x 30s ON, 30s OFF), 4 min rest between sets.`, (d) => `<strong>AN Erg:</strong> 10 x 1 min hard, 1 min easy.`, (d) => `<strong>AN Erg:</strong> 4 x 250m ON/OFF.` ], pp: [(d) => `<strong>Power Erg:</strong> 3 x (10 x 10-stroke starts) with full recovery.`, (d) => `<strong>Power Erg:</strong> A steady ${d-10} min erg with 10 max power strokes every 3 minutes.`, (d) => `<strong>Power Erg:</strong> 8-10 x 7-second standing starts.` ], recovery: (d) => `<strong>Recovery Erg:</strong> ${d} mins easy row w/ drills.`, tech: (d) => `<strong>Technique Erg:</strong> ${d} mins focus on drills (e.g., pause drills).`}; for (const key in this.sessionLibrary) { if (Array.isArray(this.sessionLibrary[key])) { this.sessionLibrary[key].sort(() => Math.random() - 0.5); } } }
+             synthesisePlan() { this.plan.title = `Progressive ${this.system} Erg Plan`; this.plan.description = `A 6-week erg plan to address a ${this.significance.toLowerCase()} in your ${this.system.toLowerCase()}, progressively building from your current training load.`; for (let weekNum = 1; weekNum <= 6; weekNum++) { const weeklyVolume = this.volumeProgression[weekNum - 1]; const weeklySessions = this.buildWeek(weekNum, weeklyVolume); this.plan.weeks.push({ week: weekNum, focus: `Building volume to approx. ${(weeklyVolume/60).toFixed(1)} hours.`, sessions: weeklySessions }); } return this.plan; }
+             buildWeek(weekNum, weeklyVolume) {
+                if (weekNum === 6) { return this.buildTaperWeek(weeklyVolume); }
+                let schedule = Array(this.days).fill(null).map(() => []);
+                let minutesToAllocate = weeklyVolume;
+                
+                const sessionPriorities = this.getSessionPriorities();
+                let highPriorityCount = this.getHighPriorityCount();
+
+                for (let i = 0; i < highPriorityCount; i++) {
+                    let dayIndex = Math.floor(i * (this.days / highPriorityCount));
+                    schedule[dayIndex].push(sessionPriorities[i % sessionPriorities.length]);
+                }
+                for (let i = 0; i < this.days; i++) {
+                    if (schedule[i].length === 0) { schedule[i].push('ut2'); }
+                }
+                if (this.sessionsPerDay > 1) {
+                    for (let i = 0; i < this.days; i++) {
+                        while (schedule[i].length < this.sessionsPerDay) {
+                           schedule[i].push('recovery');
+                        }
+                    }
+                }
+                
+                const totalSessions = schedule.flat().length;
+                let minutesPerSession = Math.round((minutesToAllocate / totalSessions) / 5) * 5; 
+                
+                let finalSchedule = [];
+                for(let i=0; i < this.days; i++) {
+                    const dayName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][i];
+                    let daySessions = schedule[i].map((type, index) => {
+                        let duration = minutesPerSession;
+                        if(this.sessionsPerDay > 1 && index > 0) duration = Math.max(30, Math.round(minutesPerSession * 0.6));
+                        const sessionOptions = this.sessionLibrary[type];
+                        let chosenSession;
+                        if (Array.isArray(sessionOptions)) {
+                            chosenSession = sessionOptions[weekNum % sessionOptions.length];
+                        } else {
+                            chosenSession = sessionOptions;
+                        }
+                        return `<strong>Session ${index+1}:</strong> ${chosenSession(duration)}`;
+                    }).join('<br>');
+                    finalSchedule.push({ day: dayName, session: daySessions });
+                }
+                 for (let i = this.days; i < 7; i++) {
+                    const dayName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][i];
+                    finalSchedule.push({ day: dayName, session: 'Rest' });
+                }
+                return finalSchedule;
+             }
+             buildTaperWeek(weeklyVolume) {
+                 const taperSessions = Math.max(1, Math.floor(this.days / 2));
+                 const sessionDuration = parseInt(document.getElementById('session-duration').value);
+                 let schedule = [];
+                 for(let i=0; i<this.days; i++) {
+                     const dayName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][i];
+                     if(i < taperSessions) {
+                        const duration = Math.min(sessionDuration, Math.round(weeklyVolume / taperSessions));
+                        schedule.push({ day: dayName, session: this.sessionLibrary.recovery(duration) });
+                     } else if (i === this.days -1) {
+                         schedule.push({ day: dayName, session: '<strong>RE-TEST DAY</strong>' });
+                     } else {
+                         schedule.push({ day: dayName, session: 'Rest' });
+                     }
+                 }
+                 for (let i = this.days; i < 7; i++) {
+                    const dayName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][i];
+                    schedule.push({ day: dayName, session: 'Rest' });
+                }
+                 return schedule;
+             }
+             getSessionPriorities() { if(this.significance === 'Major Weakness') { if(this.system === 'Aerobic') return ['at', 'ut1']; if(this.system === 'Anaerobic') return ['an', 'at']; if(this.system === 'Peak Power') return ['pp', 'recovery']; } else { if(this.system === 'Aerobic') return ['at']; if(this.system === 'Anaerobic') return ['an']; if(this.system === 'Peak Power') return ['pp']; } return ['ut2']; }
+             getHighPriorityCount() { if (this.days <= 3) return 1; if (this.days <= 5) return 2; return 2; }
+        }
+        function calculateDietaryRecommendations(gender, weight, heightCm, age, trainingDays, system, weightGoal) {
+            let bmr;
+            if (gender === 'male') { bmr = 10 * weight + 6.25 * heightCm - 5 * age + 5; } 
+            else { bmr = 10 * weight + 6.25 * heightCm - 5 * age - 161; }
+            const activityFactors = { 1:1.2, 2:1.2, 3: 1.375, 4: 1.45, 5: 1.55, 6:1.725, 7:1.725 };
+            const activityFactor = activityFactors[trainingDays];
+            let tdee = bmr * activityFactor;
+            const calorieAdjustments = { lose: -400, maintain: 0, gain: 400 };
+            tdee += calorieAdjustments[weightGoal];
+            tdee = Math.round(tdee);
+            const macroSplits = { 'Aerobic': { p: 0.25, c: 0.55, f: 0.20 }, 'Anaerobic': { p: 0.30, c: 0.45, f: 0.25 }, 'Peak Power': { p: 0.35, c: 0.40, f: 0.25 }, };
+            const split = macroSplits[system] || macroSplits['Aerobic'];
+            const proteinGrams = Math.round((tdee * split.p) / 4);
+            const carbGrams = Math.round((tdee * split.c) / 4);
+            const fatGrams = Math.round((tdee * split.f) / 9);
+            const hydrationLitres = (weight * 35) / 1000;
+            return { tdee, proteinGrams, carbGrams, fatGrams, hydrationLitres };
+        }
+        function displayAnalysis(energy, peak) {
+            const ratingToPercent = (r) => `${(r * 100).toFixed(1)}%`; const age = document.getElementById('age').value; const gender = document.getElementById('gender').value;
+            analysisOutput.innerHTML = `<h3 class="text-lg font-semibold text-gray-800">Energy System Analysis</h3><p class="text-sm text-gray-500 -mt-1 mb-2">Your results compared to age- and gender-adjusted benchmarks for a ${age}-year-old ${gender}.</p><div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center"><div class="p-4 bg-gray-100 rounded-lg"><h4 class="font-semibold text-gray-500">Peak Power Rating</h4><p class="text-2xl font-bold text-[var(--theme-blue)]">${ratingToPercent(energy.peakRating)}</p><p class="text-xs text-gray-500">of ${Math.round(energy.benchmarks.peak)}W standard</p></div><div class="p-4 bg-gray-100 rounded-lg"><h4 class="font-semibold text-gray-500">Anaerobic Rating</h4><p class="text-2xl font-bold text-[var(--theme-blue)]">${ratingToPercent(energy.anaerobicRating)}</p><p class="text-xs text-gray-500">of ${Math.round(energy.benchmarks.anaerobic)}W standard</p></div><div class="p-4 bg-gray-100 rounded-lg"><h4 class="font-semibold text-gray-500">Aerobic Rating</h4><p class="text-2xl font-bold text-[var(--theme-blue)]">${ratingToPercent(energy.aerobicRating)}</p><p class="text-xs text-gray-500">of ${Math.round(energy.benchmarks.aerobic)}W standard</p></div></div><div class="mt-4 p-4 bg-gray-100 rounded-lg text-center"><p class="text-lg font-semibold">Primary Focus Area: <span class="text-2xl font-bold text-[var(--theme-blue)]">${energy.weakestSystem}</span></p><p class="text-md text-gray-600"><strong>Significance:</strong> ${energy.weaknessSignificance}</p></div><hr class="my-6"><h3 class="text-lg font-semibold text-gray-800">Peak Power Assessment</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mt-2"><div class="p-4 bg-gray-100 rounded-lg"><h4 class="font-semibold text-gray-500">Watts/kg</h4><p class="text-2xl font-bold text-gray-700">${peak.wattsPerKg.toFixed(2)}</p></div><div class="p-4 bg-gray-100 rounded-lg"><h4 class="font-semibold text-gray-500">Age & Gender Adjusted W/kg</h4><p class="text-2xl font-bold text-gray-700">${peak.ageAdjustedWattsPerKg.toFixed(2)}</p></div><div class="p-4 bg-gray-100 rounded-lg"><h4 class="font-semibold text-gray-500">Overall Assessment</h4><p class="text-xl font-bold text-[var(--theme-blue)] mt-1">${peak.assessment}</p></div></div>`;
+        }
+        function displayZones(hrZones, paceZones) {
+            let tableHTML = `<table class="min-w-full divide-y divide-gray-200"> <thead class="bg-gray-50"> <tr> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Zone</th> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Heart Rate Range</th> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target /500m Split</th> </tr> </thead> <tbody class="bg-white divide-y divide-gray-200">`;
+            hrZones.forEach((hrZone, index) => { const paceZone = paceZones[index]; tableHTML += `<tr> <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${hrZone.name}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${hrZone.range}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${paceZone.range}</td> </tr>`; });
+            tableHTML += `</tbody></table>`; zonesOutput.innerHTML = tableHTML;
+        }
+        function displayPlan(plan) {
+            let planHTML = `<div class="mb-6"><h3 class="text-xl font-bold">${plan.title}</h3><p class="mt-1 text-gray-600">${plan.description}</p></div>`;
+            plan.weeks.forEach(week => {
+                planHTML += `<div class="mb-8 p-4 border rounded-lg"><h4 class="text-lg font-semibold mb-1">Week ${week.week}: <span class="font-normal text-gray-600">${week.focus}</span></h4><p class="text-xs text-gray-500 mb-2">Click on any bold session title to copy it to your clipboard for the ErgData app.</p><table class="w-full plan-table"><thead><tr><th class="w-1/5">Day</th><th>Session Details</th></tr></thead><tbody>`;
+                week.sessions.forEach(s => {
+                    const individualSessions = s.session.split('<br>');
+                    let processedSessionsHTML = individualSessions.map(sessionText => {
+                        if (sessionText.toLowerCase().includes('erg')) {
+                            const ergDataString = generateErgDataString(sessionText);
+                            return sessionText.replace(/<strong>(.*?)<\/strong>/, `<button class="clickable-session" onclick="copyToClipboard('${ergDataString}', this)"><strong>$1</strong></button>`);
+                        }
+                        return sessionText; 
+                    }).join('<br>');
+
+                    planHTML += `<tr><td class="font-semibold">${s.day}</td><td>${processedSessionsHTML}</td></tr>`;
+                });
+                planHTML += `</tbody></table></div>`;
+            });
+            planOutput.innerHTML = planHTML;
+        }
+        function displayMobilityRoutines() {
+            preSessionMobilityOutput.innerHTML = `<div class="mb-8 p-6 bg-gray-50 rounded-lg"> <h3 class="text-xl font-bold mb-3 text-[var(--theme-blue)]">Pre-Session Dynamic Warm-up (5-10 Mins)</h3> <p class="text-gray-600 mb-4">Perform these movements before every erg session to increase blood flow, activate key muscles, and reduce injury risk.</p> <ul class="list-disc list-inside text-gray-700 space-y-1"> <li><strong>Leg Swings (Forward & Sideways):</strong> 10-12 reps each leg</li> <li><strong>Bodyweight Squats:</strong> 15-20 reps, focusing on depth</li> <li><strong>Walking Lunges with Torso Twist:</strong> 8-10 reps each leg</li> <li><strong>Cat-Cow Stretch:</strong> 10 cycles (inhale up, exhale down)</li> <li><strong>Arm Circles:</strong> 10 forward, 10 backward (small to large)</li> <li><strong>Glute Bridges:</strong> 15 reps, squeezing glutes at the top</li> </ul> </div>`;
+            postSessionMobilityOutput.innerHTML = `<div class="mt-8 p-6 bg-gray-50 rounded-lg"> <h3 class="text-xl font-bold mb-3 text-[var(--theme-blue)]">Post-Session Cool-down & Stretching (5-10 Mins)</h3> <p class="text-gray-600 mb-4">After your cool-down, perform these static stretches to improve flexibility and aid recovery. Hold each stretch for 30-45 seconds.</p> <ul class="list-disc list-inside text-gray-700 space-y-1"> <li><strong>Seated Hamstring Stretch</strong></li> <li><strong>Hip Flexor Lunge Stretch</strong></li> <li><strong>Figure-Four Stretch (Glutes)</strong></li> <li><strong>Chest Stretch in Doorway</strong></li> <li><strong>Child's Pose (Back & Shoulders)</strong></li> </ul> </div>`;
+        }
+        function displayStrengthPlan(system, equipment, trainingDays) {
+            const strengthPlans = {
+                'Aerobic-Bodyweight': { A: '<h4>Full Body Strength (Endurance)</h4><p>Perform as a circuit. 3 rounds.</p><ul class="list-disc list-inside"><li>Squat Jumps (45s)</li><li>Push-Ups (to failure)</li><li>Alternating Lunges (30s each leg)</li><li>Pull-Ups (or Bodyweight Rows)</li><li>Plank (60s)</li></ul>'},
+                'Aerobic-Dumbbells': { A: '<h4>Full Body Strength (Endurance)</h4><ul class="list-disc list-inside"><li>Goblet Squats: 3x15</li><li>Romanian Deadlifts: 3x15</li><li>Bent Over Rows: 3x15 per arm</li><li>Dumbbell Bench Press: 3x15</li><li>Farmer\'s Walks: 3x45 seconds</li></ul>'},
+                'Aerobic-Full Gym': { A: '<h4>Full Body Strength (Endurance)</h4><ul class="list-disc list-inside"><li>Back Squats: 3x12-15</li><li>Good Mornings: 3x15</li><li>Seated Cable Rows: 3x15</li><li>Bench Press: 3x12</li><li>Kettlebell Swings: 3x25</li></ul>'},
+                'Anaerobic-Bodyweight': { A: '<h4>Full Body Strength (Strength-Endurance)</h4><ul class="list-disc list-inside"><li>Pistol Squat Progressions: 3x8-12 per leg</li><li>Clap Push-Ups: 3 to failure</li><li>Pull-Ups: 3 to failure</li><li>Nordic Curls (assisted): 3x8-12</li><li>Hanging Leg Raises: 3x15</li></ul>'},
+                'Anaerobic-Dumbbells': { A: '<h4>Full Body Strength (Strength Focus)</h4><ul class="list-disc list-inside"><li>Goblet Squats: 4x8-12</li><li>Bulgarian Split Squats: 3x10 per leg</li><li>Bent Over Rows: 4x8-12 per arm</li><li>Dumbbell Bench Press: 4x8-12</li><li>Turkish Get-Ups: 3x5 per side</li></ul>'},
+                'Anaerobic-Full Gym': { A: '<h4>Full Body Strength (Hypertrophy/Strength)</h4><ul class="list-disc list-inside"><li>Back Squats: 4x8-10</li><li>Romanian Deadlifts (Barbell): 3x10</li><li>Barbell Rows: 4x8-10</li><li>Bench Press: 4x8-10</li><li>Weighted Plank: 3x60 seconds</li></ul>'},
+                'Peak Power-Bodyweight': { A: '<h4>Full Body Strength (Explosive Power)</h4><ul class="list-disc list-inside"><li>Box Jumps: 5x5 (focus on height)</li><li>Explosive Push-Ups: 5x5</li><li>Broad Jumps: 5x5</li><li>Pull-Ups (as fast as possible): 5x3-5</li><li>Tuck Jumps: 3x10</li></ul>'},
+                'Peak Power-Dumbbells': { A: '<h4>Full Body Strength (Maximal Strength & Power)</h4><ul class="list-disc list-inside"><li>Dumbbell Jump Squats: 5x5 (heavy)</li><li>Single-Arm Dumbbell Snatch: 5x3 per arm</li><li>Weighted Pull-Ups: 5x3-5 (heavy)</li><li>Push Press (Dumbbell): 5x5</li><li>Heavy Dumbbell Swings: 5x6</li></ul>'},
+                'Peak Power-Full Gym': { A: '<h4>Full Body Strength (Maximal Strength)</h4><ul class="list-disc list-inside"><li>Deadlifts: 5x3 (heavy)</li><li>Back Squats: 5x3-5 (heavy)</li><li>Bench Press: 5x3-5 (heavy)</li><li>Weighted Pull-Ups: 5x3-5</li><li>Power Cleans: 5x3 (focus on technique)</li></ul>'}
+            };
+            const key = `${system}-${equipment}`;
+            const plan = strengthPlans[key] || strengthPlans['Aerobic-Dumbbells'];
+            let note = 'This full-body routine should be performed <strong>once per week</strong> on a rest day or after a lighter erg session. A second session can be added if you are training 6+ days/week and feel well-recovered, but the priority must remain on the erg.';
+            strengthOutput.innerHTML = `<p class="mb-4 text-gray-600">${note}</p><div class="space-y-6">${plan.A}</div>`;
+        }
+        function displayNutritionPlan(recs) {
+            nutritionOutput.innerHTML = `<div class="space-y-6"><div><p class="text-gray-600 text-sm mb-4">These are estimates based on your data, training volume, and weight goal. Adjust based on your energy levels and results.</p><div class="p-4 bg-gray-100 rounded-lg"><h5 class="font-semibold text-center">Estimated Daily Calorie Target</h5><p class="text-3xl font-bold text-center text-[var(--theme-blue)]">${recs.tdee.toLocaleString('en-GB')} kcal</p></div><div class="mt-4"><h5 class="font-semibold mb-2">Daily Macronutrient Targets:</h5><ul class="list-disc list-inside text-gray-700"><li><strong>Protein:</strong> ~${recs.proteinGrams}g</li><li><strong>Carbohydrates:</strong> ~${recs.carbGrams}g</li><li><strong>Fats:</strong> ~${recs.fatGrams}g</li></ul></div><div class="mt-4"><h5 class="font-semibold mb-2">General Guidance:</h5><ul class="list-disc list-inside text-gray-700"><li><strong>Hydration:</strong> Aim for at least <strong>${recs.hydrationLitres.toFixed(1)} litres</strong> of water per day, plus more during and after training.</li><li><strong>Nutrient Timing:</strong> Consume a meal with both protein and carbohydrates 60-90 mins before your session and within 2 hours after finishing to maximise recovery.</li><li><strong>Food Quality:</strong> Prioritise whole foods like lean meats, fish, vegetables, fruits, and complex carbohydrates (oats, brown rice, sweet potatoes).</li></ul></div><div class="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-lg text-sm"><p><strong>Disclaimer:</strong> This is an estimation for informational purposes only and does not constitute medical advice. Please consult with a doctor or registered dietitian before making significant changes to your diet.</p></div></div></div>`;
+        }
+    </script>
+</body>
+</html>
+
