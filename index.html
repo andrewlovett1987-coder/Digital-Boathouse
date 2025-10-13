@@ -482,7 +482,19 @@
         function calculatePaceZones(aerobicPower) {
             const zonePercentages = { 'UT3 (Recovery)': [0.65, 0.75], 'UT2 (Endurance)': [0.75, 0.85], 'UT1 (Tempo)': [0.85, 0.95], 'AT (Threshold)': [0.95, 1.05], 'TR (Race Pace)': [1.05, 1.15] };
             const wattsToSplitSeconds = (watts) => 500 * Math.pow(2.80 / watts, 1/3);
-            const formatSplit = (totalSeconds) => { if (isNaN(totalSeconds) || !isFinite(totalSeconds)) return "N/A"; const minutes = Math.floor(totalSeconds / 60); const seconds = totalSeconds % 60; return `${minutes}:${seconds.toFixed(1).padStart(4, '0')}`; };
+            const formatSplit = (totalSeconds) => {
+                if (isNaN(totalSeconds) || !isFinite(totalSeconds)) return "N/A";
+                const roundedSecondsTotal = Math.round(totalSeconds * 10) / 10;
+                let minutes = Math.floor(roundedSecondsTotal / 60);
+                let seconds = roundedSecondsTotal % 60;
+
+                if (seconds.toFixed(1) >= "60.0") {
+                    minutes += 1;
+                    seconds = 0;
+                }
+
+                return `${minutes}:${seconds.toFixed(1).padStart(4, '0')}`;
+            };
             let zones = [];
             for (const [name, percentages] of Object.entries(zonePercentages)) { const lowerWatts = aerobicPower * percentages[0]; const upperWatts = aerobicPower * percentages[1]; const lowerSplit = formatSplit(wattsToSplitSeconds(upperWatts)); const upperSplit = formatSplit(wattsToSplitSeconds(lowerWatts)); zones.push({ name: name, range: `${lowerSplit} - ${upperSplit}` }); }
             return zones;
