@@ -484,15 +484,10 @@
             const wattsToSplitSeconds = (watts) => 500 * Math.pow(2.80 / watts, 1/3);
             const formatSplit = (totalSeconds) => {
                 if (isNaN(totalSeconds) || !isFinite(totalSeconds)) return "N/A";
-                const roundedSecondsTotal = Math.round(totalSeconds * 10) / 10;
-                let minutes = Math.floor(roundedSecondsTotal / 60);
-                let seconds = roundedSecondsTotal % 60;
-
-                if (seconds.toFixed(1) >= "60.0") {
-                    minutes += 1;
-                    seconds = 0;
-                }
-
+                const roundedTotalSeconds = Math.round(totalSeconds * 10) / 10;
+                let minutes = Math.floor(roundedTotalSeconds / 60);
+                let seconds = roundedTotalSeconds % 60;
+                
                 return `${minutes}:${seconds.toFixed(1).padStart(4, '0')}`;
             };
             let zones = [];
