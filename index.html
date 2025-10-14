@@ -336,7 +336,7 @@
              if (!inputs || !currentAnalysis.weakestSystem) return;
              
              if (inputs.restDays.length === 0) {
-                alert("Please select at least one rest day per week to ensure adequate recovery.");
+                alert("Please select at least one rest day. Rest is not a sign of weakness; it's a critical part of training. It allows your muscles to repair, your nervous system to recover, and your body to adapt and grow stronger. Skipping rest days significantly increases the risk of overtraining, illness, and injury.");
                 return; 
              }
 
@@ -522,8 +522,10 @@
             const wattsToSplitSeconds = (watts) => 500 * Math.pow(2.80 / watts, 1/3);
             const formatSplit = (totalSeconds) => {
                 if (isNaN(totalSeconds) || !isFinite(totalSeconds)) return "N/A";
-                let minutes = Math.floor(totalSeconds / 60);
-                let seconds = totalSeconds % 60;
+                const roundedTotalSeconds = Math.round(totalSeconds * 10) / 10;
+                let minutes = Math.floor(roundedTotalSeconds / 60);
+                let seconds = roundedTotalSeconds % 60;
+                
                 return `${minutes}:${seconds.toFixed(1).padStart(4, '0')}`;
             };
             let zones = [];
@@ -617,12 +619,11 @@
                 if (weekNum === 6) { return this.buildTaperWeek(weeklyVolume); }
                 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
                 let finalSchedule = daysOfWeek.map(day => ({ day, session: ''}));
-                
+
                 this.restDays.forEach(rd => { const day = finalSchedule.find(d => d.day === rd); if(day) day.session = 'Rest'; });
                 this.waterDays.forEach(wd => { const day = finalSchedule.find(d => d.day === wd); if(day) day.session = 'On Water Session'; });
 
                 const availableDays = finalSchedule.filter(d => d.session === '');
-                const availableDayNames = availableDays.map(d => d.day);
 
                 if (this.targetSessions > availableDays.length * 3) {
                     alert(`Error: Cannot schedule ${this.targetSessions} sessions in ${availableDays.length} available day(s). Please reduce the number of target sessions or adjust your rest/water days.`);
@@ -634,7 +635,7 @@
                 sessionsToPlace.forEach(type => {
                     let placed = false;
                     let attempts = 0;
-                    while(!placed && attempts < availableDays.length * 3) { // *3 to allow for triple sessions
+                    while(!placed && attempts < availableDays.length * 3) {
                         const currentDay = availableDays[dayIndex % availableDays.length];
                         const currentSessionCount = currentDay.session ? currentDay.session.split('<br>').length : 0;
                         if (currentSessionCount < 3) {
@@ -657,6 +658,11 @@
                  this.waterDays.forEach(wd => { const day = finalSchedule.find(d => d.day === wd); if(day) day.session = 'On Water Session'; });
                  
                  const availableDays = finalSchedule.filter(d => d.session === 'Rest');
+                 if (availableDays.length === 0) { // All days are water/rest
+                     finalSchedule.find(d => d.day === 'Sunday').session = 'RE-TEST DAY';
+                     return finalSchedule;
+                 }
+
                  const taperSessionsCount = Math.max(1, Math.floor(availableDays.length / 2));
                  
                  for(let i=0; i < availableDays.length; i++) {
@@ -665,8 +671,6 @@
                         availableDays[i].session = this.sessionLibrary.recovery(duration);
                      } else if (i === availableDays.length - 1) {
                          availableDays[i].session = '<strong>RE-TEST DAY</strong>';
-                     } else {
-                         // They remain Rest days
                      }
                  }
                  return finalSchedule;
