@@ -336,7 +336,7 @@
              if (!inputs || !currentAnalysis.weakestSystem) return;
              
              if (inputs.restDays.length === 0) {
-                alert("Please select at least one rest day. Rest is not a sign of weakness; it's a critical part of training. It allows your muscles to repair, your nervous system to recover, and your body to adapt and grow stronger. Skipping rest days significantly increases the risk of overtraining, illness, and injury.");
+                alert("Please select at least one rest day.\n\nRest is not a sign of weakness; it's a critical part of training. It allows your muscles to repair, your nervous system to recover, and your body to adapt and grow stronger. Skipping rest days significantly increases the risk of overtraining, illness, and injury.");
                 return; 
              }
 
@@ -631,18 +631,21 @@
                 }
 
                 const sessionsToPlace = this.getWeeklySessionTypes();
+                let dailySessionCount = {};
+                availableDays.forEach(day => dailySessionCount[day.day] = 0);
+                
                 let dayIndex = 0;
                 sessionsToPlace.forEach(type => {
                     let placed = false;
                     let attempts = 0;
                     while(!placed && attempts < availableDays.length * 3) {
                         const currentDay = availableDays[dayIndex % availableDays.length];
-                        const currentSessionCount = currentDay.session ? currentDay.session.split('<br>').length : 0;
-                        if (currentSessionCount < 3) {
+                        if (dailySessionCount[currentDay.day] < 3) {
                             const sessionOptions = this.sessionLibrary[type];
                             const chosenSession = Array.isArray(sessionOptions) ? sessionOptions[weekNum % sessionOptions.length] : sessionOptions;
-                            const sessionHTML = `<strong>Session ${currentSessionCount + 1}:</strong> ${chosenSession(this.sessionDuration)}`;
+                            const sessionHTML = `<strong>Session ${dailySessionCount[currentDay.day] + 1}:</strong> ${chosenSession(this.sessionDuration)}`;
                             currentDay.session = currentDay.session ? `${currentDay.session}<br>${sessionHTML}` : sessionHTML;
+                            dailySessionCount[currentDay.day]++;
                             placed = true;
                         }
                         dayIndex++;
@@ -659,7 +662,8 @@
                  
                  const availableDays = finalSchedule.filter(d => d.session === 'Rest');
                  if (availableDays.length === 0) { // All days are water/rest
-                     finalSchedule.find(d => d.day === 'Sunday').session = 'RE-TEST DAY';
+                     const testDay = finalSchedule.find(d => d.day === 'Sunday') || finalSchedule[6];
+                     testDay.session = '<strong>RE-TEST DAY</strong>';
                      return finalSchedule;
                  }
 
